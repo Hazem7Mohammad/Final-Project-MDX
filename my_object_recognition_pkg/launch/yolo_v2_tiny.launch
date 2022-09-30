@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<launch>
+  
+  <!-- Use YOLOv2 -->
+  <arg name="network_param_file"         default="$(find darknet_ros)/config/yolov2-tiny.yaml"/>  <!--yaml-->
+  <!-- <arg name="network_param_file"         default="$(find darknet_ros)/config/yolov3.yaml"/> -->
+
+  <arg name="image" default="/camera/rgb/image_color" />   <!-- this is for kinect cam -->
+
+  <!-- Include main launch file -->
+  <include file="$(find darknet_ros)/launch/darknet_ros.launch">
+
+  <!-- use these arguments which are appointed above ,, if not appointed use default from darknet_ros.launch -->
+    <arg name="network_param_file"    value="$(arg network_param_file)"/>
+    <arg name="image" value="$(arg image)" />
+  </include>
+
+</launch>
