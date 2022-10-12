@@ -1,0 +1,147 @@
+Function H1
+
+                           Motor On
+
+                           Power Low
+
+                           Speed 50
+
+                          
+
+              String toks$(0), receive$ 'Receive data string type
+
+              Integer i, pt
+
+'Sets parameters for a TCP/IP using port number 201
+
+'Ip address "EpsonVT6, host number, Terminator type "CRLF", Software control, No timeout
+
+        SetNet #201, "192.168.150.2", 2001, CRLF
+
+'Opens a TCP/IP port for communication with python code in Laptop which connected to the same network.
+
+        OpenNet #201 As Server 'Open this system as server
+
+        WaitNet #201 'Wait for TCP/IP port connection to be established.
+
+        OnErr GoTo ehandle 'when facing error go to Error function and apply Error accordingly
+
+              Do
+
+           Input #201, receive$ 'Receive the coordinates from python code
+
+           Print receive$ 'Print the received data "Coordinates" 
+
+           
+
+           ParseStr receive$, toks$(), " "
+
+           For i = 0 To UBound(toks$)
+
+                           Print "token ", i, " = ", toks$(i)
+
+           Next i
+
+      Loop Until UBound(toks$) = 1
+
+     
+
+      Print "Finished listening"
+
+
+      Go Approach
+
+ Wait 1
+ On 8
+ 
+      For pt = 0 To 1 Step 2
+
+              Go XY(Val(toks$(pt)), Val(toks$(pt + 1)), 350, 52, 0, 180)
+
+
+				 Wait 1
+				 Off 8
+				 Wait 2
+				 
+ 			Go XY(Val(toks$(pt)), Val(toks$(pt + 1)), 450, 52, 0, 180)
+ 			
+ 			
+ 
+
+
+ 
+
+'unscrew 1
+'
+'                           Go Here :Z(360)
+'
+'                           Off 11
+'
+'                           Wait 1
+'
+'                           On 11
+'
+'                           Go Here :Z(370)
+
+                          
+
+             
+
+'placetobox
+
+      
+
+       
+
+ 'unscrew 2
+
+               Next pt
+
+              Go XY(-616, -37, 377, 52, 0, 180)
+
+              Wait 1
+              On 8
+              
+              
+              
+ Go Approach
+ 
+       Exit Function
+
+ehandle:
+
+                Call ErrConFunc
+
+                EResume                                            'Return to the error line
+
+                           EResume Next  'Return to the error line
+
+Fend
+
+Function ErrConFunc
+
+        Print ErrMsg$(Err(0))     'Error text of the current error
+
+        Print #201, ErrMsg$(Err(0))
+
+        Select Err(0)
+
+               Case 2902            'Error reading from Ethernet port
+
+                               OpenNet #201 As Client
+
+                               WaitNet #201
+
+               Case 2910 'Timeout reading from an Ethernet port.
+
+                               OpenNet #201 As Client
+
+                               WaitNet #201
+
+               Default
+
+                               Error Err(0)
+
+                               Send
+
+Fend
