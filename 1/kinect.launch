@@ -1,0 +1,42 @@
+<!-- /home/hazem/ros/catkin_ws/src/my_object_recognition_pkg/launch -->
+
+
+<!-- This is an XML launch file for launching ROS nodes and configurations. -->
+
+<launch>
+
+  <!-- Include the "freenect.launch" file from the "freenect_launch" package. -->
+  <include file="$(find freenect_launch)/launch/freenect.launch" />
+
+  <!-- Include the "darknet_ros_3d.launch" file from the "darknet_ros_3d" package. -->
+  <include file="$(find darknet_ros_3d)/launch/darknet_ros_3d.launch" />
+
+  <!--
+    This is a commented-out argument that could be used to set a delay
+    before starting the nodes. Currently, it's disabled.
+  -->
+  <!-- <arg name="node_start_delay" default="5.0" />   -->
+
+  <!-- Launch the "rviz" visualization tool. -->
+  <node pkg="rviz" type="rviz" name="rviz"
+        args="-d $(find darknet_ros_3d)/rviz/yolo.rviz"/>
+
+</launch>
+
+
+
+<!-- <?xml version="1.0"?>
+<launch>
+
+<include file="$(find freenect_launch)/launch/freenect.launch" />
+<include file="$(find darknet_ros_3d)/launch/darknet_ros_3d.launch" />
+<!-- <arg name="node_start_delay" default="5.0" />   -->
+<node pkg="rviz" type="rviz" name="rviz"
+    args="-d $(find darknet_ros_3d)/rviz/yolo.rviz"/>
+
+
+
+</launch>
+
+ -->
+

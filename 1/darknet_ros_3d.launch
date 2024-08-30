@@ -1,0 +1,86 @@
+<!-- /home/hazem/ros/catkin_ws/src/gb_visual_detection_3d/darknet_ros_3d/launch -->
+
+<launch>
+  
+  <!-- Config camera image topic -->
+  <!-- get data from topic  -->
+  <!-- Define an argument for the camera RGB image topic and set a default value. -->
+  <arg name="camera_rgb_topic" default="/camera/rgb/image_color" />
+  
+  <!-- Console launch prefix -->
+  <!-- Define an argument for the launch prefix that will be added to node launch commands. -->
+  <arg name="launch_prefix" default=""/>
+
+  <!-- Config and weights folder. -->
+  <!-- the folder where the configration files exist -->
+  <!-- Define arguments for paths to YOLO weights and configuration files. -->
+  <arg name="yolo_weights_path" default="$(find darknet_ros)/yolo_network_config/weights"/>
+  <!-- these files dont open i dont know what is inside them  -->
+  <arg name="yolo_config_path" default="$(find darknet_ros)/yolo_network_config/cfg"/>
+  <!-- these files you need to understand what they contain , i can open them -->
+
+
+  <!-- ROS and network parameter files -->
+  <!-- Define arguments for paths to ROS and YOLO network parameter files. -->
+  <arg name="ros_param_file" default="$(find darknet_ros)/config/ros.yaml"/>
+  <arg name="network_param_file" default="$(find darknet_ros)/config/yolov2-tiny.yaml"/>
+
+  <!-- Load parameters -->
+  <!-- Load ROS and network parameters using 'rosparam load' command. -->
+  <rosparam command="load" ns="darknet_ros" file="$(arg network_param_file)"/>
+  <rosparam command="load" file="$(find darknet_ros)/config/ros.yaml"/>
+  <!-- Set a parameter for the camera reading topic for the darknet_ros package. -->
+  <param name="darknet_ros/subscribers/camera_reading/topic" type="string" value="$(arg camera_rgb_topic)" />
+
+  <!-- Start darknet and ros wrapper -->
+  <!-- Start the darknet_ros node that interfaces YOLO with ROS. -->
+  <node pkg="darknet_ros" type="darknet_ros" name="darknet_ros" output="screen" launch-prefix="$(arg launch_prefix)">
+    <!-- Set parameters for YOLO weights and configuration paths. -->
+    <param name="weights_path" value="$(arg yolo_weights_path)" />
+    <param name="config_path" value="$(arg yolo_config_path)" />
+  </node>
+
+  <!-- Start darknet ros 3d -->
+  <!-- Start the darknet_ros_3d node that performs 3D object detection with YOLO. -->
+  <node pkg="darknet_ros_3d" type="darknet3d_node" name="darknet_3d" output="screen">
+    <!-- Load parameters for the darknet_ros_3d node. -->
+    <rosparam command="load" file="$(find darknet_ros_3d)/config/darknet_3d.yaml" />
+  </node>
+</launch>
+
+<!-- 
+Explanation:
+
+This code snippet is a ROS launch file that configures and launches nodes related to YOLO-based 
+object detection and 3D object detection using the darknet_ros and darknet_ros_3d packages.
+
+- `camera_rgb_topic`: An argument specifying the topic where RGB images from the camera are published.
+
+- `launch_prefix`: An argument for adding a launch prefix to node commands.
+
+- `yolo_weights_path` and `yolo_config_path`: Arguments specifying paths to YOLO weights and 
+configuration files.
+
+- `ros_param_file` and `network_param_file`: Arguments specifying paths to ROS and YOLO network 
+parameter files.
+
+- `<rosparam command="load" ns="darknet_ros" file="$(arg network_param_file)" />`: Loads YOLO network 
+parameters under the "darknet_ros" namespace.
+
+- `<rosparam command="load" file="$(find darknet_ros)/config/ros.yaml" />`: Loads ROS parameters 
+from a configuration file.
+
+- `<param name="darknet_ros/subscribers/camera_reading/topic" type="string" 
+value="$(arg camera_rgb_topic)" />`: Sets a parameter for the camera reading topic 
+for the darknet_ros package.
+
+- `<node pkg="darknet_ros" ...>`: Starts the darknet_ros node, which interfaces YOLO with ROS. 
+Sets parameters for YOLO weights and configuration paths.
+
+- `<node pkg="darknet_ros_3d" ...>`: Starts the darknet_ros_3d node, which performs 3D object 
+detection with YOLO. Loads parameters for the darknet_ros_3d node.
+
+This launch file facilitates the integration and configuration of YOLO-based object detection 
+with ROS, along with its 3D extension, for detecting objects in a 3D space. The use of 
+arguments and parameter files makes it easy to customize the configuration and paths based 
+on specific requirements and setups. -->
